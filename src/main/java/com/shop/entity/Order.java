@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -40,7 +41,7 @@ public class Order {
 	@Enumerated(EnumType.STRING)
 	private OrderStatus orderStatus; // 주문상태
 	
-	@OneToMany(mappedBy = "order")
+	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
 	private List<OrderItem> orderItems = new ArrayList<>();
 	
 	private LocalDateTime regTime;
