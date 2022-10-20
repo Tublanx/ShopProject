@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.shop.constant.ItemSellStatus;
 import com.shop.repository.ItemRepository;
 import com.shop.repository.MemberRepository;
+import com.shop.repository.OrderItemRepository;
 import com.shop.repository.OrderRepository;
 
 @SpringBootTest
@@ -33,6 +34,9 @@ class OrderTest {
 
 	@Autowired
 	MemberRepository memberRepository;
+
+	@Autowired
+	OrderItemRepository orderItemRepository;
 
 	@PersistenceContext
 	EntityManager entityManager;
@@ -100,6 +104,21 @@ class OrderTest {
 		Order order = this.createOrder();
 		order.getOrderItems().remove(0);
 		entityManager.flush();
+	}
+
+	@Test
+	@DisplayName("지연 로딩 테스트")
+	public void lazyLoadingTest() {
+		Order order = this.createOrder();
+		Long orderItemId = order.getOrderItems().get(0).getId();
+		entityManager.flush();
+		entityManager.clear();
+
+		OrderItem orderItem = orderItemRepository.findById(orderItemId).orElseThrow(EntityNotFoundException::new);
+		System.out.println("Order class: " + orderItem.getOrder().getClass());
+		System.out.println("==============================");
+		orderItem.getOrder().getOrderDate();
+		System.out.println("==============================");
 	}
 
 }
